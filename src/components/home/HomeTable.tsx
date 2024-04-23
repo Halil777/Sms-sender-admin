@@ -7,6 +7,39 @@ const HomeTable: FC = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [text, setText] = useState(false);
 
+  // const [isClicked, setClicked] = useState(false);
+  // const [messageSent, setMessageSent] = useState(false);
+
+  // // Animation for button moving from left to right
+  // const buttonAnimationMessage = useSpring({
+  //   from: { bottom: -50, opacity: 0 },
+  //   to: { right: 10, opacity: 1 },
+  //   delay: 2000,
+  // });
+
+  // Animation for send icon flying from left to right
+  // const sendIconAnimation = useSpring({
+  //   from: { transform: "translateX(-100%)", opacity: 0 },
+  //   to: async (next) => {
+  //     await next({ opacity: 1 });
+  //     await next({ transform: "translateX(100%)" });
+  //   },
+  // });
+
+  // // Function to handle click on the send message button
+  // const handleClick = () => {
+  //   setClicked(true);
+  //   // Simulate sending message
+  //   setTimeout(() => {
+  //     setMessageSent(true);
+  //     // Reset message sent state after 3 seconds
+  //     setTimeout(() => {
+  //       setMessageSent(false);
+  //       setText(false); // Reset text modal state after sending the message
+  //     }, 3000);
+  //   }, 1000);
+  // };
+
   // Function to handle select all checkbox
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
@@ -97,17 +130,39 @@ const HomeTable: FC = () => {
         </animated.button>
         {text && (
           <>
-            <div className="dark:bg-white border px-5 py-5 fixed top-[30%] rounded-[6px] text-white dark:text-black left-[30%] w-[50%]  bg-green-950">
+            <div className="dark:bg-gray-800 border px-5 py-5 fixed top-[30%] rounded-[6px] text-gray-700 font-bold dark:text-gray-300 left-[30%] w-[50%]  bg-gray-200">
               <h1 className="mb-4">Write your message for your clients</h1>
               <textarea
                 name=""
-                className="border rounded-xl w-full h-[200px] outline-none pl-5 pt-3"
+                className="border rounded-xl w-full h-[200px] outline-none pl-5 pt-3 text-black"
                 id=""
               ></textarea>
-              <div className="flex mt-3 justify-end">
-                <button className=" bg-green-900 text-white px-4 py-2 rounded-[8px] ">
-                  Send Message
-                </button>
+              {/* <div className="relative">
+                <animated.button
+                  onClick={handleClick}
+                  style={buttonAnimationMessage}
+                  className="bg-green-900 text-white px-4 py-2 rounded-[8px] outline-none"
+                >
+                  {!isClicked ? "Send Message" : "Your message sent"}
+                  {isClicked && (
+                    <animated.span style={sendIconAnimation}>
+                      <FiSend />
+                    </animated.span>
+                  )}
+                </animated.button>
+                {messageSent && (
+                  <div className="absolute bg-green-900 text-white px-4 py-2 rounded-[8px] bottom-3 right-3">
+                    Your message sent
+                  </div>
+                )}
+              </div> */}
+              <div className="flex">
+                <animated.button
+                  style={buttonAnimation}
+                  className="bg-green-800 text-white px-4 py-2 rounded-[8px] outline-none "
+                >
+                  {/* {!isClicked ? "Send Message" : "Your message sent"} */}
+                </animated.button>
               </div>
             </div>
           </>

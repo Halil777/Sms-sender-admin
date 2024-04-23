@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { MdClear } from "react-icons/md";
 
-const AddClient: FC = () => {
+const EditClient: FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);
 
   const handleClick = () => {
@@ -131,4 +131,4 @@ const AddClient: FC = () => {
   );
 };
 
-export default AddClient;
+export default EditClient;
