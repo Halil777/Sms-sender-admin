@@ -2,7 +2,7 @@ import { FC } from "react";
 
 const Events: FC = () => {
   return (
-    <div className="container mx-auto mt-8 flex">
+    <div className="container mx-auto mt-8 flex dark:text-white">
       {/* Calendar Grid */}
       <div className="flex-grow mr-8">
         <h2 className="text-xl font-semibold mb-4">April 2024</h2>
