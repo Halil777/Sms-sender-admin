@@ -6,9 +6,9 @@ import { HiOutlineHome } from "react-icons/hi";
 // import { CiSettings } from "react-icons/ci";
 // import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import HamburgerButton from "../../common/hamburgerMenu/HamburgerButton";
+import { GoHistory } from "react-icons/go";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
-import { FaHistory } from "react-icons/fa";
 import Profile from "../../profile/Profile";
 
 interface MenuItem {
@@ -36,14 +36,14 @@ const Sidebar: FC = () => {
     },
     { title: "sidebar.home", path: "/", src: <HiOutlineHome /> },
     {
-      title: "sidebar.events",
+      title: "Events",
       path: "/events",
       src: <IoCalendarNumberOutline />,
     },
     {
-      title: "sidebar.history",
+      title: "History",
       path: "/history",
-      src: <FaHistory />,
+      src: <GoHistory />,
     },
     // {
     //   title: "sidebar.settings",

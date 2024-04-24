@@ -59,7 +59,7 @@ const HomeTable: FC = () => {
           </thead>
           <tbody>
             {Array.from({ length: 10 }, (_, i) => (
-              <tr key={i}>
+              <tr key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                 <td className="border flex items-center gap-3 pl-5 py-2">
                   <input
                     type="checkbox"
