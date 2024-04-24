@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import { FiEdit } from "react-icons/fi";
 import { MdClear } from "react-icons/md";
 
 const EditClient: FC = () => {
@@ -10,18 +11,19 @@ const EditClient: FC = () => {
   return (
     <div>
       <button
+        title="Edit Client"
         onClick={handleClick}
-        className="bg-green-700 text-white py-2 px-3 rounded-[8px] shadow-2xl "
+        className="mr-5 text-green-600 dark:text-green-400"
       >
-        + Add Client
+        <FiEdit />
       </button>
 
       {showDrawer && (
         <>
           <div className="w-full">
-            <div className="dark:bg-gray-700 top-10 p-5 w-[65%]  absolute right-5 rounded-xl bg-gray-200 ">
+            <div className="dark:bg-gray-700 top-0 p-5 w-[50%] z-30  absolute right-0 h-screen rounded-xl bg-gray-200 ">
               <div className="flex justify-between items-center">
-                <h1 className="font-bold dark:text-gray-100">Add Client</h1>
+                <h1 className="font-bold dark:text-gray-100">Edit Client</h1>
                 <MdClear
                   title="Close"
                   onClick={handleClick}
@@ -72,7 +74,7 @@ const EditClient: FC = () => {
                   <select
                     id="region"
                     name="region"
-                    className="mt-1 block w-full pl-3 pr-10  text-base py-3 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full pl-3 pr-10 dark:text-gray-400 text-base py-3 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                   >
                     <option value="ChooseRegion">Choose Region</option>
                     <option value="Ashgabat">Ashgabat</option>
@@ -86,14 +88,14 @@ const EditClient: FC = () => {
                 <div className="w-1/2 pl-2">
                   <label
                     htmlFor="category"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium  text-gray-700"
                   >
                     Category
                   </label>
                   <select
                     id="category"
                     name="category"
-                    className="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full pl-3 dark:text-gray-400 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                   >
                     <option value="choose">Choose Category</option>
                     <option value="greenHouse">Green House</option>

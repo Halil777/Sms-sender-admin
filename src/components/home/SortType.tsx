@@ -3,7 +3,7 @@ import { FC } from "react";
 const SortType: FC = () => {
   return (
     <div className="flex  flex-col gap-3">
-      <label htmlFor="region" className="mr-2 font-medium">
+      <label htmlFor="region" className="mr-2 dark:text-white font-medium">
         Filter by Type:
       </label>
       <select

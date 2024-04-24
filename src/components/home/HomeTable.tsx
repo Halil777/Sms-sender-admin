@@ -1,63 +1,27 @@
 import { FC, useState } from "react";
-import { FiEdit, FiTrash } from "react-icons/fi"; // Importing edit and delete icons from react-icons library
 import { useSpring, animated } from "react-spring";
+import EditClient from "./EditClient";
+import DeleteClient from "./DeleteClient";
 
 const HomeTable: FC = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [text, setText] = useState(false);
 
-  // const [isClicked, setClicked] = useState(false);
-  // const [messageSent, setMessageSent] = useState(false);
-
-  // // Animation for button moving from left to right
-  // const buttonAnimationMessage = useSpring({
-  //   from: { bottom: -50, opacity: 0 },
-  //   to: { right: 10, opacity: 1 },
-  //   delay: 2000,
-  // });
-
-  // Animation for send icon flying from left to right
-  // const sendIconAnimation = useSpring({
-  //   from: { transform: "translateX(-100%)", opacity: 0 },
-  //   to: async (next) => {
-  //     await next({ opacity: 1 });
-  //     await next({ transform: "translateX(100%)" });
-  //   },
-  // });
-
-  // // Function to handle click on the send message button
-  // const handleClick = () => {
-  //   setClicked(true);
-  //   // Simulate sending message
-  //   setTimeout(() => {
-  //     setMessageSent(true);
-  //     // Reset message sent state after 3 seconds
-  //     setTimeout(() => {
-  //       setMessageSent(false);
-  //       setText(false); // Reset text modal state after sending the message
-  //     }, 3000);
-  //   }, 1000);
-  // };
-
-  // Function to handle select all checkbox
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
     if (!selectAll) {
-      const allRowIndexes = Array.from({ length: 10 }, (_, i) => i + 1); // Assuming you have 10 rows, you can replace this with the actual number of rows
+      const allRowIndexes = Array.from({ length: 10 }, (_, i) => i + 1);
       setSelectedRows(allRowIndexes);
     } else {
       setSelectedRows([]);
     }
   };
 
-  //   function for opening write message modal
-
   const handleMessage = () => {
     setText(!text);
   };
 
-  // Function to handle individual row checkbox
   const handleRowCheckbox = (rowIndex: number) => {
     const index = selectedRows.indexOf(rowIndex);
     if (index === -1) {
@@ -70,7 +34,7 @@ const HomeTable: FC = () => {
   const buttonAnimation = useSpring({
     from: { bottom: -50, opacity: 0 },
     to: { bottom: 20, opacity: 1 },
-    delay: 1000, // Optional delay for animation
+    delay: 1000,
   });
 
   return (
@@ -109,13 +73,9 @@ const HomeTable: FC = () => {
                   +993 61 000000
                 </td>
                 <td className="border px-4 py-2">Lorem ipsum</td>
-                <td className="border px-4 py-2 text-center">
-                  <button className="mr-5 text-green-600 dark:text-green-400">
-                    <FiEdit />
-                  </button>
-                  <button className="text-red-700 dark:text-red-500 ml-3">
-                    <FiTrash />
-                  </button>
+                <td className="border flex items-center  pl-[30%] py-2">
+                  <EditClient />
+                  <DeleteClient />
                 </td>
               </tr>
             ))}
@@ -134,34 +94,15 @@ const HomeTable: FC = () => {
               <h1 className="mb-4">Write your message for your clients</h1>
               <textarea
                 name=""
-                className="border rounded-xl w-full h-[200px] outline-none pl-5 pt-3 text-black"
+                className="border rounded-xl w-full h-[130px] outline-none pl-5 pt-3 text-black"
                 id=""
               ></textarea>
-              {/* <div className="relative">
-                <animated.button
-                  onClick={handleClick}
-                  style={buttonAnimationMessage}
-                  className="bg-green-900 text-white px-4 py-2 rounded-[8px] outline-none"
-                >
-                  {!isClicked ? "Send Message" : "Your message sent"}
-                  {isClicked && (
-                    <animated.span style={sendIconAnimation}>
-                      <FiSend />
-                    </animated.span>
-                  )}
-                </animated.button>
-                {messageSent && (
-                  <div className="absolute bg-green-900 text-white px-4 py-2 rounded-[8px] bottom-3 right-3">
-                    Your message sent
-                  </div>
-                )}
-              </div> */}
-              <div className="flex">
+              <div className="flex justify-end">
                 <animated.button
                   style={buttonAnimation}
                   className="bg-green-800 text-white px-4 py-2 rounded-[8px] outline-none "
                 >
-                  {/* {!isClicked ? "Send Message" : "Your message sent"} */}
+                  Send Message
                 </animated.button>
               </div>
             </div>
