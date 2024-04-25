@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
+import Notifications from "./Notifications";
 
 interface Day {
   date?: Date; // Optional property for date
@@ -63,9 +64,9 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <div className="calendar container mx-auto mt-8 flex dark:text-white">
-      <div className="flex-grow mr-8">
-        <div className="flex gap-5 justify-center  mb-4 w-[70%]">
+    <div className="flex gap-10">
+      <div className="calendar container mx-auto mt-8 flex w-[70%] flex-col dark:text-white">
+        <div className="flex gap-5 justify-center  w-full mb-4 ">
           <button
             title={new Date(
               currentDate.getFullYear(),
@@ -93,7 +94,7 @@ const Calendar: React.FC = () => {
             <FaArrowRight />
           </button>
         </div>
-        <div className="grid grid-cols-7 w-[70%]">
+        <div className="grid grid-cols-7 w-full">
           <span className="text-center font-semibold">Sun</span>
           <span className="text-center font-semibold">Mon</span>
           <span className="text-center font-semibold">Tue</span>
@@ -115,6 +116,11 @@ const Calendar: React.FC = () => {
               {day.date ? day.date.getDate() : ""}
             </div>
           ))}
+        </div>
+      </div>
+      <div className="w-[30%]">
+        <div className="w-full">
+          <Notifications />
         </div>
       </div>
     </div>

@@ -2,8 +2,13 @@ import { FC, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import EditClient from "./EditClient";
 import DeleteClient from "./DeleteClient";
+import { User } from "../../type/type";
 
-const HomeTable: FC = () => {
+type HomeTableProps = {
+  users: User[];
+};
+
+const HomeTable: FC<HomeTableProps> = ({ users }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [text, setText] = useState(false);
@@ -58,27 +63,37 @@ const HomeTable: FC = () => {
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: 10 }, (_, i) => (
-              <tr key={i} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                <td className="border flex items-center gap-3 pl-5 py-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.includes(i + 1)}
-                    onChange={() => handleRowCheckbox(i + 1)}
-                  />
-                  {i + 1}
-                </td>
-                <td className="border px-4 py-2">John Doe</td>
-                <td className="border px-4 py-2 text-center ">
-                  +993 61 000000
-                </td>
-                <td className="border px-4 py-2">Lorem ipsum</td>
-                <td className="border flex items-center  pl-[30%] py-2">
-                  <EditClient />
-                  <DeleteClient />
-                </td>
-              </tr>
-            ))}
+            {users.map(
+              (user: {
+                id: number;
+                fullName: string;
+                phone: string;
+                description: string;
+              }) => (
+                <tr
+                  key={user.id}
+                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <td className="border flex items-center gap-3 pl-5 py-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.includes(user.id)}
+                      onChange={() => handleRowCheckbox(user.id)}
+                    />
+                    {user.id}
+                  </td>
+                  <td className="border px-4 py-2">{user.fullName}</td>
+                  <td className="border px-4 py-2 text-center ">
+                    {user.phone}
+                  </td>
+                  <td className="border px-4 py-2">{user.description}</td>
+                  <td className="border flex items-center  pl-[30%] py-2">
+                    <EditClient />
+                    <DeleteClient />
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
         <animated.button
