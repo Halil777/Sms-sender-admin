@@ -1,48 +1,76 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { FiTrash } from "react-icons/fi";
-import FilterHistory from "../../components/history/FilterHistory";
-import SortHistory from "../../components/history/SortHistory";
+import { AxiosInstance } from "../../api/AxiosInstance";
+import FilterRegion from "../../components/home/FilterRegion";
+import SortType from "../../components/home/SortType";
+import { User } from "../../type/type";
 
 interface Message {
   id: number;
-  name: string;
+  message: string;
+  scheduledDate: string;
+  phone: string;
+  isScheduled: boolean;
+  status: string;
+  userId: number;
+  uuid: string;
   region: string;
   type: string;
-  date: string;
-  message: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const History: FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      name: "John Doe",
-      region: "Ashgabat",
-      type: "Tiplissa",
-      date: "2024-04-25",
-      message: "Lorem ipsum dolor sit amet.",
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      region: "Ashgabat",
-      type: "Tiplissa",
-      date: "2024-04-25",
-      message: "Lorem ipsum dolor sit amet.",
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      region: "Ashgabat",
-      type: "Tiplissa",
-      date: "2024-04-25",
-      message: "Lorem ipsum dolor sit amet.",
-    },
-  ]);
+  const [filteredMessages, setFilteredMessages] = useState<Message[]>([]);
+  const [regionFilter, setRegionFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
 
-  // Function to handle delete message
-  const handleDeleteMessage = (id: number) => {
-    setMessages(messages.filter((message) => message.id !== id));
+  const fetchData = async () => {
+    try {
+      let url = "/history/filter";
+
+      if (regionFilter && typeFilter) {
+        url = `/history/filter?region=${regionFilter}&type=${typeFilter}`;
+      } else if (typeFilter) {
+        url = `/history/filter?type=${typeFilter}`;
+      } else if (regionFilter) {
+        url = `/history/filter?region=${regionFilter}`;
+      }
+
+      const [messagesResponse, usersResponse] = await Promise.all([
+        AxiosInstance.get<Message[]>(url),
+        AxiosInstance.get<User[]>("/user"), // Adjust the endpoint if needed
+      ]);
+
+      setFilteredMessages(messagesResponse.data);
+      setUsers(usersResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [regionFilter, typeFilter]);
+
+  const handleRegionFilterChange = (region: string) => {
+    setRegionFilter(region === "all" ? null : region);
+  };
+
+  const handleTypeFilterChange = (type: string) => {
+    setTypeFilter(type === "all" ? null : type);
+  };
+
+  const handleDeleteMessage = async (id: number) => {
+    try {
+      await AxiosInstance.delete(`/history/${id}`);
+      setFilteredMessages((prevMessages) =>
+        prevMessages.filter((message) => message.id !== id)
+      );
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    }
   };
 
   return (
@@ -52,42 +80,52 @@ const History: FC = () => {
           History Page
         </h1>
         <div className="flex items-center gap-4">
-          <FilterHistory />
-          <SortHistory />
+          <FilterRegion onRegionChange={handleRegionFilterChange} />
+          <SortType onTypeChange={handleTypeFilterChange} />
         </div>
       </div>
       <div className="overflow-x-auto">
+        <h2 className="text-lg font-bold mb-2">Sent Messages</h2>
         <table className="table-auto w-full dark:text-white">
           <thead>
             <tr>
               <th className="px-4 border py-2">ID</th>
-              <th className="px-4 border py-2">Name</th>
+              <th className="px-4 border py-2">Full Name</th>
+              <th className="px-4 border py-2">Message</th>
+              <th className="px-4 border py-2">Phone Number</th>
               <th className="px-4 border py-2">Region</th>
               <th className="px-4 border py-2">Type</th>
               <th className="px-4 border py-2">Date</th>
-              <th className="px-4 border py-2">Message</th>
               <th className="px-4 border py-2">Action</th>
             </tr>
           </thead>
           <tbody>
-            {messages.map((message) => (
-              <tr key={message.id}>
-                <td className="border px-4 py-2">{message.id}</td>
-                <td className="border px-4 py-2">{message.name}</td>
-                <td className="border px-4 py-2">{message.region}</td>
-                <td className="border px-4 py-2">{message.type}</td>
-                <td className="border px-4 py-2">{message.date}</td>
-                <td className="border px-4 py-2">{message.message}</td>
-                <td className="border px-4 py-2 text-center">
-                  <button
-                    className="text-red-700 dark:text-red-500"
-                    onClick={() => handleDeleteMessage(message.id)}
-                  >
-                    <FiTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {filteredMessages.map((message) => {
+              const user = users.find((user) => user.id === message.userId);
+              return (
+                <tr key={message.id}>
+                  <td className="border px-4 py-2">{message.id}</td>
+                  <td className="border px-4 py-2">
+                    {user ? user.fullName : "-"}
+                  </td>
+                  <td className="border px-4 py-2">{message.message}</td>
+                  <td className="border px-4 py-2">{message.phone}</td>
+                  <td className="border px-4 py-2">{message.region}</td>
+                  <td className="border px-4 py-2">{message.type}</td>
+                  <td className="border px-4 py-2">
+                    {message.created_at.substring(0, 10)}
+                  </td>
+                  <td className="border px-4 py-2 text-center">
+                    <button
+                      className="text-red-700 dark:text-red-500"
+                      onClick={() => handleDeleteMessage(message.id)}
+                    >
+                      <FiTrash />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

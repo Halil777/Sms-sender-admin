@@ -7,6 +7,7 @@ export interface User {
   type: string;
   created_at: string;
   updated_at: string;
+  sequentialNumber?: number;
 }
 
 export interface Params {
