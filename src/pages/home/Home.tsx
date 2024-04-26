@@ -8,12 +8,22 @@ import { User } from "../../type/type";
 
 const Home: FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [regionFilter, setRegionFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
-      const response = await AxiosInstance.get<User[]>("/user");
+      let url = "/user";
+      if (regionFilter && typeFilter) {
+        url = `/user/filter-users?region=${regionFilter}&type=${typeFilter}`;
+      } else if (regionFilter) {
+        url = `/user/filter-users?region=${regionFilter}`;
+      } else if (typeFilter) {
+        url = `/user/filter-users?type=${typeFilter}`;
+      }
+
+      const response = await AxiosInstance.get<User[]>(url);
       setUsers(response.data);
-      console.log("Data fetched successfully:", response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -21,18 +31,26 @@ const Home: FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [regionFilter, typeFilter]);
+
+  const handleRegionFilterChange = (region: string) => {
+    setRegionFilter(region === "all" ? null : region);
+  };
+
+  const handleTypeFilterChange = (type: string) => {
+    setTypeFilter(type === "all" ? null : type);
+  };
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-10">
-          <FilterRegion />
-          <SortType />
+        <div className="flex items-center gap-10 ">
+          <FilterRegion onRegionChange={handleRegionFilterChange} />
+          <SortType onTypeChange={handleTypeFilterChange} />
         </div>
-        <AddClient />
+        <AddClient fetchData={fetchData} />
       </div>
-      <HomeTable users={users} />
+      <HomeTable users={users} fetchData={fetchData} />
     </div>
   );
 };

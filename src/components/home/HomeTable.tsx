@@ -6,35 +6,44 @@ import { User } from "../../type/type";
 
 type HomeTableProps = {
   users: User[];
+  fetchData: () => void;
 };
 
-const HomeTable: FC<HomeTableProps> = ({ users }) => {
+const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [text, setText] = useState(false);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll) {
-      const allRowIndexes = Array.from({ length: 10 }, (_, i) => i + 1);
-      setSelectedRows(allRowIndexes);
+    setSelectedRows(!selectAll ? users.map((user) => user.id) : []);
+  };
+
+  const handleRowCheckbox = (rowIndex: number) => {
+    const newSelectedRows = [...selectedRows];
+    const index = newSelectedRows.indexOf(rowIndex);
+
+    if (index === -1) {
+      newSelectedRows.push(rowIndex);
     } else {
-      setSelectedRows([]);
+      newSelectedRows.splice(index, 1);
     }
+
+    setSelectedRows(newSelectedRows);
   };
 
   const handleMessage = () => {
     setText(!text);
   };
 
-  const handleRowCheckbox = (rowIndex: number) => {
-    const index = selectedRows.indexOf(rowIndex);
-    if (index === -1) {
-      setSelectedRows([...selectedRows, rowIndex]);
-    } else {
-      setSelectedRows(selectedRows.filter((row) => row !== rowIndex));
-    }
-  };
+  // const handleRowCheckbox = (rowIndex: number) => {
+  //   const index = selectedRows.indexOf(rowIndex);
+  //   if (index === -1) {
+  //     setSelectedRows([...selectedRows, rowIndex]);
+  //   } else {
+  //     setSelectedRows(selectedRows.filter((row) => row !== rowIndex));
+  //   }
+  // };
 
   const buttonAnimation = useSpring({
     from: { bottom: -50, opacity: 0 },
@@ -48,14 +57,14 @@ const HomeTable: FC<HomeTableProps> = ({ users }) => {
         <table className="table-auto w-full dark:text-white">
           <thead>
             <tr>
-              <th className="flex items-center gap-3 pl-5 border py-2">
+              <th className="border px-4 py-2 text-center">
                 <input
                   type="checkbox"
                   checked={selectAll}
                   onChange={handleSelectAll}
                 />
-                ID
               </th>
+              <th className="px-4 border py-2">ID</th>
               <th className="px-4 border py-2">Full Name</th>
               <th className="px-4 border py-2">Phone Number</th>
               <th className="px-4 border py-2">Description</th>
@@ -74,13 +83,15 @@ const HomeTable: FC<HomeTableProps> = ({ users }) => {
                   key={user.id}
                   className="hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <td className="border flex items-center gap-3 pl-5 py-2">
+                  <td className="border px-4 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={selectedRows.includes(user.id)}
                       onChange={() => handleRowCheckbox(user.id)}
                     />
-                    {user.id}
+                  </td>
+                  <td className="border px-4 py-2">
+                    <h1>{user.id}</h1>
                   </td>
                   <td className="border px-4 py-2">{user.fullName}</td>
                   <td className="border px-4 py-2 text-center ">
@@ -88,8 +99,8 @@ const HomeTable: FC<HomeTableProps> = ({ users }) => {
                   </td>
                   <td className="border px-4 py-2">{user.description}</td>
                   <td className="border flex items-center  pl-[30%] py-2">
-                    <EditClient />
-                    <DeleteClient />
+                    <EditClient user={user} fetchData={fetchData} />
+                    <DeleteClient userId={user.id} fetchData={fetchData} />
                   </td>
                 </tr>
               )

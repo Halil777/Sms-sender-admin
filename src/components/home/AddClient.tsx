@@ -3,12 +3,16 @@ import { MdClear } from "react-icons/md";
 import { AxiosInstance } from "../../api/AxiosInstance";
 import { Params } from "../../type/type";
 
-const AddClient: FC = () => {
+interface AddClientProps {
+  fetchData: () => void;
+}
+
+const AddClient: FC<AddClientProps> = ({ fetchData }) => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [fullName, setFullName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phone, setPhoneNumber] = useState("+993");
   const [region, setRegion] = useState("ChooseRegion");
-  const [category, setCategory] = useState("choose");
+  const [type, setType] = useState("choose");
   const [description, setDescription] = useState("");
   const [params, setParams] = useState<Params>({ regions: [], userTypes: [] });
 
@@ -21,7 +25,6 @@ const AddClient: FC = () => {
       try {
         const response = await AxiosInstance.get("/user/params");
         setParams(response.data);
-        console.log("Params fetched successfully:", response.data);
       } catch (error) {
         console.error("Error fetching params:", error);
       }
@@ -34,17 +37,19 @@ const AddClient: FC = () => {
     try {
       const response = await AxiosInstance.post("/user", {
         fullName,
-        phoneNumber,
+        phone,
         region,
-        category,
+        type,
         description,
       });
-      console.log("User added successfully:", response.data);
+      console.log(response.data);
       setFullName("");
       setPhoneNumber("");
       setRegion("ChooseRegion");
-      setCategory("choose");
+      setType("choose");
       setDescription("");
+      fetchData();
+      setShowDrawer(!showDrawer);
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -61,7 +66,7 @@ const AddClient: FC = () => {
 
       {showDrawer && (
         <>
-          <div className="w-full">
+          <div className="w-full fixed top-0 right-0">
             <div className="dark:bg-gray-700 top-0 p-5 w-[50%] z-30  absolute right-0 h-screen rounded-xl bg-gray-200 ">
               <div className="flex justify-between items-center">
                 <h1 className="font-bold dark:text-gray-100">Add Client</h1>
@@ -99,10 +104,10 @@ const AddClient: FC = () => {
                   </label>
                   <input
                     placeholder="Write Your Phone Number"
-                    type="number"
+                    type="text"
                     name="phone_number"
                     id="phone_number"
-                    value={phoneNumber}
+                    value={phone}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     className="mt-1 focus:ring-indigo-500 py-3 px-2 outline-none focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   />
@@ -141,8 +146,8 @@ const AddClient: FC = () => {
                   <select
                     id="category"
                     name="category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
                     className="mt-1 block w-full pl-3 pr-10 dark:text-gray-400 text-base py-3 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                   >
                     <option value="choose">Choose Category</option>

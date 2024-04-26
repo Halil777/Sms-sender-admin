@@ -1,16 +1,36 @@
 import { FC, useState } from "react";
 import { FiTrash } from "react-icons/fi";
+import { AxiosInstance } from "../../api/AxiosInstance";
 
-const DeleteClient: FC = () => {
+type DeleteTableProps = {
+  fetchData: () => void;
+  userId: number;
+};
+
+const DeleteClient: FC<DeleteTableProps> = ({ userId, fetchData }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleDelete = () => {
-    setShowDeleteModal(!showDeleteModal);
+  const handleDelete = async () => {
+    if (userId) {
+      try {
+        await AxiosInstance.delete(`/user/${userId}`); // DELETE request with user ID
+        console.log("User deleted successfully!");
+        setShowDeleteModal(false);
+        fetchData(); // Call the function to refresh data after deletion
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      } finally {
+        setShowDeleteModal(false); // Close the modal after deletion attempt
+      }
+    } else {
+      console.error("User not found");
+    }
   };
+
   return (
     <div>
       <button
-        onClick={handleDelete}
+        onClick={() => setShowDeleteModal(true)}
         className="text-red-700 dark:text-red-500 ml-3"
       >
         <FiTrash />
@@ -24,11 +44,14 @@ const DeleteClient: FC = () => {
                 Are you sure you want to delete this item?
               </p>
               <div className="mt-16 flex justify-end">
-                <button className="bg-red-500 text-white px-3 py-1 rounded mr-2">
+                <button
+                  onClick={handleDelete}
+                  className="bg-red-500 text-white px-3 py-1 rounded mr-2"
+                >
                   Delete
                 </button>
                 <button
-                  onClick={handleDelete}
+                  onClick={() => setShowDeleteModal(false)}
                   className="bg-gray-300 px-3 py-1 rounded"
                 >
                   Cancel
