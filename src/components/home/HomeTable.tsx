@@ -48,24 +48,12 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
         ids: selectedRows,
       };
 
-      // Send the message to the backend
       await AxiosInstance.post("/sms/send-sms", data);
-      // Optionally, you can add a success message or handle UI updates
       console.log("Message sent successfully!");
     } catch (error) {
       console.error("Error sending message:", error);
-      // Handle error, show error message, etc.
     }
   };
-
-  // const handleRowCheckbox = (rowIndex: number) => {
-  //   const index = selectedRows.indexOf(rowIndex);
-  //   if (index === -1) {
-  //     setSelectedRows([...selectedRows, rowIndex]);
-  //   } else {
-  //     setSelectedRows(selectedRows.filter((row) => row !== rowIndex));
-  //   }
-  // };
 
   const buttonAnimation = useSpring({
     from: { bottom: -50, opacity: 0 },
@@ -144,6 +132,8 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
                 name=""
                 className="border rounded-xl w-full h-[130px] outline-none pl-5 pt-3 text-black"
                 id=""
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
               ></textarea>
               <div className="flex justify-end">
                 <animated.button
