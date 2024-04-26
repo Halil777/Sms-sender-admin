@@ -3,6 +3,7 @@ import { useSpring, animated } from "react-spring";
 import EditClient from "./EditClient";
 import DeleteClient from "./DeleteClient";
 import { User } from "../../type/type";
+import { AxiosInstance } from "../../api/AxiosInstance";
 
 type HomeTableProps = {
   users: User[];
@@ -13,6 +14,7 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [text, setText] = useState(false);
+  const [messageContent, setMessageContent] = useState("");
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
@@ -34,6 +36,26 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
 
   const handleMessage = () => {
     setText(!text);
+    setMessageContent("");
+  };
+
+  const sendSMS = async () => {
+    try {
+      const data = {
+        message: messageContent,
+        scheduledDate: null,
+        isScheduled: false,
+        ids: selectedRows,
+      };
+
+      // Send the message to the backend
+      await AxiosInstance.post("/sms/send-sms", data);
+      // Optionally, you can add a success message or handle UI updates
+      console.log("Message sent successfully!");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Handle error, show error message, etc.
+    }
   };
 
   // const handleRowCheckbox = (rowIndex: number) => {
@@ -125,6 +147,7 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
               ></textarea>
               <div className="flex justify-end">
                 <animated.button
+                  onClick={sendSMS}
                   style={buttonAnimation}
                   className="bg-green-800 text-white px-4 py-2 rounded-[8px] outline-none "
                 >

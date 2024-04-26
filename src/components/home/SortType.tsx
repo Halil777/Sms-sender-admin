@@ -20,8 +20,8 @@ const SortType: FC<SortTypeProps> = ({ onTypeChange }) => {
         onChange={handleTypeChange}
       >
         <option value="all">Choose Type</option>
-        <option value="GreenHouse">Green House</option>
-        <option value="Company">Company</option>
+        <option value="parnik">Green House</option>
+        <option value="zawod">Company</option>
       </select>
     </div>
   );
