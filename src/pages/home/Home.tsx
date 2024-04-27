@@ -10,8 +10,10 @@ const Home: FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       let url = "/user";
       if (regionFilter && typeFilter) {
@@ -26,6 +28,8 @@ const Home: FC = () => {
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,7 +54,7 @@ const Home: FC = () => {
         </div>
         <AddClient fetchData={fetchData} />
       </div>
-      <HomeTable users={users} fetchData={fetchData} />
+      <HomeTable users={users} fetchData={fetchData} loading={loading} />
     </div>
   );
 };

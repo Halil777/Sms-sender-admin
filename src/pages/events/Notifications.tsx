@@ -2,17 +2,28 @@ import { FC } from "react";
 import { UserEvent } from "./Events";
 import { MdDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
+import EmptyPage from "../../components/common/empty/EmptyPage";
+import HomeLoading from "../../components/loading/HomeLoading";
 
 interface NotificationsProps {
   events: UserEvent[];
   deleteEvent: (id: string) => void;
+  loading: boolean;
 }
 
-const Notifications: FC<NotificationsProps> = ({ events, deleteEvent }) => {
+const Notifications: FC<NotificationsProps> = ({
+  events,
+  deleteEvent,
+  loading,
+}) => {
   const formatReminderDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
+
+  if (loading) {
+    return <HomeLoading />;
+  }
 
   return (
     <div className="dark:text-gray-200 text-gray-800 flex flex-col h-screen">
@@ -45,7 +56,7 @@ const Notifications: FC<NotificationsProps> = ({ events, deleteEvent }) => {
             </div>
           </div>
         ))}
-        {events.length === 0 && <p className="p-4">No events found</p>}
+        {events.length === 0 && <EmptyPage />}
       </div>
     </div>
   );

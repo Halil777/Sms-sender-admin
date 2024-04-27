@@ -22,18 +22,20 @@ const Calendar: React.FC = () => {
   const [addEvent, setAddEvent] = useState(false);
   const [events, setEvents] = useState<UserEvent[]>([]);
   const [clickedDay, setClickedDay] = useState<Date | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEvents();
   }, []);
-
   const fetchEvents = async () => {
     try {
       const response = await AxiosInstance.get("/scheduler");
       setEvents(response.data);
+      setLoading(false);
       console.log(response.data);
     } catch (error) {
       console.error("Error fetching events:", error);
+      setLoading(false);
     }
   };
 
@@ -160,7 +162,11 @@ const Calendar: React.FC = () => {
         </div>
         <div className="w-[30%]">
           <div className="w-full">
-            <Notifications events={events} deleteEvent={deleteEvent} />
+            <Notifications
+              events={events}
+              deleteEvent={deleteEvent}
+              loading={loading}
+            />
           </div>
         </div>
       </div>

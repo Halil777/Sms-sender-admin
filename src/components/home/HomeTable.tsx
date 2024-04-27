@@ -1,21 +1,25 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import EditClient from "./EditClient";
 import DeleteClient from "./DeleteClient";
 import { MdClear } from "react-icons/md";
 import { User } from "../../type/type";
 import { AxiosInstance } from "../../api/AxiosInstance";
+import HomeLoading from "../loading/HomeLoading";
+import EmptyPage from "../common/empty/EmptyPage";
 
 type HomeTableProps = {
   users: User[];
   fetchData: () => void;
+  loading: boolean;
 };
 
-const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
+const HomeTable: FC<HomeTableProps> = ({ users, fetchData, loading }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [text, setText] = useState(false);
   const [messageContent, setMessageContent] = useState("");
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   // Function to generate sequential numbers starting from 1
   const generateSequentialNumbers = (userList: User[]) => {
@@ -24,6 +28,12 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
       sequentialNumber: index + 1,
     }));
   };
+
+  useEffect(() => {
+    if (!loading) {
+      setDataLoaded(users.length > 0);
+    }
+  }, [loading, users]);
 
   const usersWithNumbers = generateSequentialNumbers(users);
 
@@ -88,60 +98,66 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData }) => {
   return (
     <>
       <div className="overflow-x-auto ">
-        <table className="table-auto w-full dark:text-white">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2 text-center">
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                />
-              </th>
-              <th className="px-4 border py-2">ID</th>
-              <th className="px-4 border py-2">Full Name</th>
-              <th className="px-4 border py-2">Phone Number</th>
-              <th className="px-4 border py-2">Description</th>
-              <th className="px-4 border py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usersWithNumbers.map(
-              (user: {
-                id: number;
-                fullName: string;
-                phone: string;
-                description: string;
-                sequentialNumber?: number;
-              }) => (
-                <tr
-                  key={user.id}
-                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <td className="border px-4 py-2 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.includes(user.id)}
-                      onChange={() => handleRowCheckbox(user.id)}
-                    />
-                  </td>
-                  <td className="border px-4 py-2">
-                    <h1>{user.sequentialNumber}</h1>
-                  </td>
-                  <td className="border px-4 py-2">{user.fullName}</td>
-                  <td className="border px-4 py-2 text-center ">
-                    {user.phone}
-                  </td>
-                  <td className="border px-4 py-2">{user.description}</td>
-                  <td className="border flex items-center  pl-[30%] py-2">
-                    <EditClient user={user} fetchData={fetchData} />
-                    <DeleteClient userId={user.id} fetchData={fetchData} />
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
+        {loading ? (
+          <HomeLoading />
+        ) : dataLoaded ? (
+          <table className="table-auto w-full dark:text-white">
+            <thead>
+              <tr>
+                <th className="border px-4 py-2 text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                  />
+                </th>
+                <th className="px-4 border py-2">ID</th>
+                <th className="px-4 border py-2">Full Name</th>
+                <th className="px-4 border py-2">Phone Number</th>
+                <th className="px-4 border py-2">Description</th>
+                <th className="px-4 border py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usersWithNumbers.map(
+                (user: {
+                  id: number;
+                  fullName: string;
+                  phone: string;
+                  description: string;
+                  sequentialNumber?: number;
+                }) => (
+                  <tr
+                    key={user.id}
+                    className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <td className="border px-4 py-2 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.includes(user.id)}
+                        onChange={() => handleRowCheckbox(user.id)}
+                      />
+                    </td>
+                    <td className="border px-4 py-2">
+                      <h1>{user.sequentialNumber}</h1>
+                    </td>
+                    <td className="border px-4 py-2">{user.fullName}</td>
+                    <td className="border px-4 py-2 text-center ">
+                      {user.phone}
+                    </td>
+                    <td className="border px-4 py-2">{user.description}</td>
+                    <td className="border flex items-center  pl-[30%] py-2">
+                      <EditClient user={user} fetchData={fetchData} />
+                      <DeleteClient userId={user.id} fetchData={fetchData} />
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+        ) : (
+          <EmptyPage />
+        )}
         <animated.button
           onClick={handleMessage}
           style={buttonAnimation}

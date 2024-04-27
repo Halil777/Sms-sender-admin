@@ -5,6 +5,8 @@ import FilterRegion from "../../components/home/FilterRegion";
 import SortType from "../../components/home/SortType";
 import { User } from "../../type/type";
 import SearchUserMessage from "./SearchUserMessage";
+import HomeLoading from "../../components/loading/HomeLoading";
+import EmptyPage from "../../components/common/empty/EmptyPage";
 
 interface Message {
   id: number;
@@ -26,8 +28,17 @@ const History: FC = () => {
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setDataLoaded(users.length > 0);
+    }
+  }, [loading, users]);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       let url = "/history/filter";
 
@@ -48,6 +59,8 @@ const History: FC = () => {
       setUsers(usersResponse.data);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,63 +103,66 @@ const History: FC = () => {
           History Page
         </h1>
       </div>
-      <div className="overflow-x-auto">
-        <div className="flex justify-between items-center mb-5 mt-5">
-          <h2 className="text-lg font-bold mb-2 dark:text-white">
-            Sent Messages
-          </h2>
-          <div className="flex items-center gap-4">
-            <FilterRegion onRegionChange={handleRegionFilterChange} />
-            <SortType onTypeChange={handleTypeFilterChange} />
+      {loading ? (
+        <HomeLoading />
+      ) : dataLoaded ? (
+        <div className="overflow-x-auto">
+          <div className="flex justify-between items-center mb-5 mt-5">
+            <div className="flex items-center gap-4">
+              <FilterRegion onRegionChange={handleRegionFilterChange} />
+              <SortType onTypeChange={handleTypeFilterChange} />
+            </div>
             <SearchUserMessage
               suggestions={users.map((user) => user.fullName)}
               onChange={handleSearchChange}
             />
           </div>
+          <table className="table-auto w-full dark:text-white">
+            <thead>
+              <tr>
+                <th className="px-4 border py-2">ID</th>
+                <th className="px-4 border py-2">Full Name</th>
+                <th className="px-4 border py-2">Message</th>
+                <th className="px-4 border py-2">Phone Number</th>
+                <th className="px-4 border py-2">Region</th>
+                <th className="px-4 border py-2">Type</th>
+                <th className="px-4 border py-2">Date</th>
+                <th className="px-4 border py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredMessages.map((message) => {
+                const user = users.find((user) => user.id === message.userId);
+                return (
+                  <tr key={message.id}>
+                    <td className="border px-4 py-2">{message.id}</td>
+                    <td className="border px-4 py-2">
+                      {user ? user.fullName : "-"}
+                    </td>
+                    <td className="border px-4 py-2">{message.message}</td>
+                    <td className="border px-4 py-2">{message.phone}</td>
+                    <td className="border px-4 py-2">{message.region}</td>
+                    <td className="border px-4 py-2">{message.type}</td>
+                    <td className="border px-4 py-2">
+                      {message.created_at.substring(0, 10)}
+                    </td>
+                    <td className="border px-4 py-2 text-center">
+                      <button
+                        className="text-red-700 dark:text-red-500"
+                        onClick={() => handleDeleteMessage(message.id)}
+                      >
+                        <FiTrash />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-        <table className="table-auto w-full dark:text-white">
-          <thead>
-            <tr>
-              <th className="px-4 border py-2">ID</th>
-              <th className="px-4 border py-2">Full Name</th>
-              <th className="px-4 border py-2">Message</th>
-              <th className="px-4 border py-2">Phone Number</th>
-              <th className="px-4 border py-2">Region</th>
-              <th className="px-4 border py-2">Type</th>
-              <th className="px-4 border py-2">Date</th>
-              <th className="px-4 border py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMessages.map((message) => {
-              const user = users.find((user) => user.id === message.userId);
-              return (
-                <tr key={message.id}>
-                  <td className="border px-4 py-2">{message.id}</td>
-                  <td className="border px-4 py-2">
-                    {user ? user.fullName : "-"}
-                  </td>
-                  <td className="border px-4 py-2">{message.message}</td>
-                  <td className="border px-4 py-2">{message.phone}</td>
-                  <td className="border px-4 py-2">{message.region}</td>
-                  <td className="border px-4 py-2">{message.type}</td>
-                  <td className="border px-4 py-2">
-                    {message.created_at.substring(0, 10)}
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    <button
-                      className="text-red-700 dark:text-red-500"
-                      onClick={() => handleDeleteMessage(message.id)}
-                    >
-                      <FiTrash />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      ) : (
+        <EmptyPage />
+      )}
     </>
   );
 };
