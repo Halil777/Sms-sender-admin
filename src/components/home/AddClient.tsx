@@ -44,7 +44,7 @@ const AddClient: FC<AddClientProps> = ({ fetchData }) => {
       });
       console.log(response.data);
       setFullName("");
-      setPhoneNumber("");
+      setPhoneNumber("+993");
       setRegion("ChooseRegion");
       setType("choose");
       setDescription("");

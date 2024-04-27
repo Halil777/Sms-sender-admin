@@ -17,7 +17,7 @@ const Notifications: FC<NotificationsProps> = ({ events, deleteEvent }) => {
   return (
     <div className="dark:text-gray-200 text-gray-800 flex flex-col h-screen">
       <span className="text-2xl font-bold mb-10">Events</span>
-      <div className="border w-[90%] h-[70%] overflow-auto">
+      <div className="border w-[100%] h-[70%] overflow-auto">
         {events.map((event) => (
           <div key={event.id} className="p-4 border-b">
             <h3 className="text-lg font-semibold text-center">{event.title}</h3>
@@ -31,7 +31,7 @@ const Notifications: FC<NotificationsProps> = ({ events, deleteEvent }) => {
                   {formatReminderDate(event.reminderDate).substring(0, 10)}
                 </span>
               </p>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center">
                 <button className="hover:bg-gray-200 rounded-[50px] p-2 dark:hover:bg-gray-600 text-green-500">
                   <FaRegEdit />
                 </button>

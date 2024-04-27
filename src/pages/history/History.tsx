@@ -4,6 +4,7 @@ import { AxiosInstance } from "../../api/AxiosInstance";
 import FilterRegion from "../../components/home/FilterRegion";
 import SortType from "../../components/home/SortType";
 import { User } from "../../type/type";
+import SearchUserMessage from "./SearchUserMessage";
 
 interface Message {
   id: number;
@@ -40,7 +41,7 @@ const History: FC = () => {
 
       const [messagesResponse, usersResponse] = await Promise.all([
         AxiosInstance.get<Message[]>(url),
-        AxiosInstance.get<User[]>("/user"), // Adjust the endpoint if needed
+        AxiosInstance.get<User[]>("/user"),
       ]);
 
       setFilteredMessages(messagesResponse.data);
@@ -53,6 +54,15 @@ const History: FC = () => {
   useEffect(() => {
     fetchData();
   }, [regionFilter, typeFilter]);
+
+  const handleSearchChange = (name: string) => {
+    // Filter messages based on selected user name
+    const filtered = filteredMessages.filter((message) => {
+      const user = users.find((user) => user.id === message.userId);
+      return user?.fullName?.toLowerCase().includes(name.toLowerCase());
+    });
+    setFilteredMessages(filtered);
+  };
 
   const handleRegionFilterChange = (region: string) => {
     setRegionFilter(region === "all" ? null : region);
@@ -76,16 +86,24 @@ const History: FC = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl dark:text-white font-bold mb-4">
+        <h1 className="text-2xl  dark:text-white font-bold mb-4">
           History Page
         </h1>
-        <div className="flex items-center gap-4">
-          <FilterRegion onRegionChange={handleRegionFilterChange} />
-          <SortType onTypeChange={handleTypeFilterChange} />
-        </div>
       </div>
       <div className="overflow-x-auto">
-        <h2 className="text-lg font-bold mb-2">Sent Messages</h2>
+        <div className="flex justify-between items-center mb-5 mt-5">
+          <h2 className="text-lg font-bold mb-2 dark:text-white">
+            Sent Messages
+          </h2>
+          <div className="flex items-center gap-4">
+            <FilterRegion onRegionChange={handleRegionFilterChange} />
+            <SortType onTypeChange={handleTypeFilterChange} />
+            <SearchUserMessage
+              suggestions={users.map((user) => user.fullName)}
+              onChange={handleSearchChange}
+            />
+          </div>
+        </div>
         <table className="table-auto w-full dark:text-white">
           <thead>
             <tr>
