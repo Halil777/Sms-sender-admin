@@ -45,6 +45,7 @@ const Sidebar: FC = () => {
       path: "/history",
       src: <GoHistory />,
     },
+
     // {
     //   title: "sidebar.settings",
     //   startIcon: <CiSettings />,

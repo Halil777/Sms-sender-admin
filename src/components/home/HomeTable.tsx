@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import EditClient from "./EditClient";
 import DeleteClient from "./DeleteClient";
@@ -20,14 +20,14 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData, loading }) => {
   const [text, setText] = useState(false);
   const [messageContent, setMessageContent] = useState("");
   const [dataLoaded, setDataLoaded] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Function to generate sequential numbers starting from 1
-  const generateSequentialNumbers = (userList: User[]) => {
-    return userList.map((user, index) => ({
-      ...user,
-      sequentialNumber: index + 1,
-    }));
-  };
+  // const generateSequentialNumbers = (userList: User[]) => {
+  //   return userList.map((user, index) => ({
+  //     ...user,
+  //     sequentialNumber: index + 1,
+  //   }));
+  // };
 
   useEffect(() => {
     if (!loading) {
@@ -35,19 +35,19 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData, loading }) => {
     }
   }, [loading, users]);
 
-  const usersWithNumbers = generateSequentialNumbers(users);
-
-  // const handleSelectAll = () => {
-  //   setSelectAll(!selectAll);
-  //   setSelectedRows(!selectAll ? users.map((user) => user.id) : []);
-  // };
+  // const usersWithNumbers = generateSequentialNumbers(users);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    setSelectedRows(
-      !selectAll ? [] : usersWithNumbers.map((user) => user.sequentialNumber)
-    ); // Empty array when deselecting
+    setSelectedRows(!selectAll ? users.map((user) => user.id) : []);
   };
+
+  // const handleSelectAll = () => {
+  //   setSelectAll(!selectAll);
+  //   setSelectedRows(
+  //     !selectAll ? [] : usersWithNumbers.map((user) => user.sequentialNumber)
+  //   ); // Empty array when deselecting
+  // };
 
   const handleRowCheckbox = (rowIndex: number) => {
     const newSelectedRows = [...selectedRows];
@@ -67,11 +67,16 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData, loading }) => {
 
     if (hasSelectedUsers) {
       setText(!text);
-      setMessageContent(""); // Clear message content when opening
+      setMessageContent("");
     } else {
+      audioRef.current
+        ?.play()
+        .catch((error) => console.error("Audio playback failed:", error));
+
       alert("Please select a user first before opening the dialog box");
     }
   };
+
   const sendSMS = async () => {
     try {
       const data = {
@@ -84,6 +89,9 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData, loading }) => {
       await AxiosInstance.post("/sms/send-sms", data);
       console.log("Message sent successfully!");
       setText(false);
+      audioRef.current
+        ?.play()
+        .catch((error) => console.error("Audio playback failed:", error));
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -101,101 +109,112 @@ const HomeTable: FC<HomeTableProps> = ({ users, fetchData, loading }) => {
         {loading ? (
           <HomeLoading />
         ) : dataLoaded ? (
-          <table className="table-auto w-full dark:text-white">
-            <thead>
-              <tr>
-                <th className="border px-4 py-2 text-center">
-                  <input
-                    type="checkbox"
-                    checked={selectAll}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th className="px-4 border py-2">ID</th>
-                <th className="px-4 border py-2">Full Name</th>
-                <th className="px-4 border py-2">Phone Number</th>
-                <th className="px-4 border py-2">Description</th>
-                <th className="px-4 border py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usersWithNumbers.map(
-                (user: {
-                  id: number;
-                  fullName: string;
-                  phone: string;
-                  description: string;
-                  sequentialNumber?: number;
-                }) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <td className="border px-4 py-2 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.includes(user.id)}
-                        onChange={() => handleRowCheckbox(user.id)}
-                      />
-                    </td>
-                    <td className="border px-4 py-2">
-                      <h1>{user.sequentialNumber}</h1>
-                    </td>
-                    <td className="border px-4 py-2">{user.fullName}</td>
-                    <td className="border px-4 py-2 text-center ">
-                      {user.phone}
-                    </td>
-                    <td className="border px-4 py-2">{user.description}</td>
-                    <td className="border flex items-center  pl-[30%] py-2">
-                      <EditClient user={user} fetchData={fetchData} />
-                      <DeleteClient userId={user.id} fetchData={fetchData} />
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
+          <>
+            <table className="table-auto w-full dark:text-white">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th className="px-4 border py-2">Full Name</th>
+                  <th className="px-4 border py-2">Phone Number</th>
+                  <th className="px-4 border py-2">Description</th>
+                  <th className="px-4 border py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(
+                  (user: {
+                    id: number;
+                    fullName: string;
+                    phone: string;
+                    description: string;
+                    sequentialNumber?: number;
+                  }) => (
+                    <tr
+                      key={user.id}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <td className="border px-4 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(user.id)}
+                          onChange={() => handleRowCheckbox(user.id)}
+                        />
+                      </td>
+                      <td className="border px-4 py-2">{user.fullName}</td>
+                      <td className="border px-4 py-2 text-center ">
+                        {user.phone}
+                      </td>
+                      <td className="border px-4 py-2">{user.description}</td>
+                      <td className="border flex items-center  pl-[30%] py-2">
+                        <EditClient user={user} fetchData={fetchData} />
+                        <DeleteClient userId={user.id} fetchData={fetchData} />
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+
+            <animated.button
+              onClick={handleMessage}
+              style={buttonAnimation}
+              className="fixed bg-green-900 text-white px-4 py-2 rounded-[8px] bottom-3 right-3"
+            >
+              Write Message
+            </animated.button>
+            <audio
+              ref={audioRef}
+              src="./mp3/error-call-to-attention-129258 (1).mp3"
+              preload="auto"
+            />
+            {text && (
+              <>
+                <div className="dark:bg-gray-700 px-5 py-5 fixed top-[30%] rounded-[6px] text-gray-700 font-bold dark:text-gray-300 left-[30%] w-[35%]  bg-gray-200">
+                  <div className="flex justify-between items-center mb-3">
+                    <h1 className="mb-4">
+                      Write your message for your clients
+                    </h1>
+                    <button
+                      title="Close Message Area"
+                      onClick={() => setText(false)}
+                    >
+                      <MdClear />
+                    </button>
+                  </div>
+                  <textarea
+                    name=""
+                    placeholder="Write your Message ..."
+                    className="border rounded-xl mb-5 dark:bg-gray-200 w-full h-[130px] outline-none pl-5 pt-3 text-gray-800"
+                    id=""
+                    value={messageContent}
+                    onChange={(e) => setMessageContent(e.target.value)}
+                  ></textarea>
+                  <div className="flex justify-end">
+                    <animated.button
+                      onClick={sendSMS}
+                      style={buttonAnimation}
+                      className="bg-green-800 text-white px-4 py-2 rounded-[8px] outline-none "
+                    >
+                      Send Message
+                    </animated.button>
+                    <audio
+                      ref={audioRef}
+                      src="./mp3/new-notification-on-your-device-138695.mp3"
+                      preload="auto"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </>
         ) : (
           <EmptyPage />
-        )}
-        <animated.button
-          onClick={handleMessage}
-          style={buttonAnimation}
-          className="fixed bg-green-900 text-white px-4 py-2 rounded-[8px] bottom-3 right-3"
-        >
-          Write Message
-        </animated.button>
-        {text && (
-          <>
-            <div className="dark:bg-gray-700 px-5 py-5 fixed top-[30%] rounded-[6px] text-gray-700 font-bold dark:text-gray-300 left-[30%] w-[35%]  bg-gray-200">
-              <div className="flex justify-between items-center mb-3">
-                <h1 className="mb-4">Write your message for your clients</h1>
-                <button
-                  title="Close Message Area"
-                  onClick={() => setText(false)}
-                >
-                  <MdClear />
-                </button>
-              </div>
-              <textarea
-                name=""
-                placeholder="Write your Message ..."
-                className="border rounded-xl mb-5 dark:bg-gray-200 w-full h-[130px] outline-none pl-5 pt-3 text-gray-800"
-                id=""
-                value={messageContent}
-                onChange={(e) => setMessageContent(e.target.value)}
-              ></textarea>
-              <div className="flex justify-end">
-                <animated.button
-                  onClick={sendSMS}
-                  style={buttonAnimation}
-                  className="bg-green-800 text-white px-4 py-2 rounded-[8px] outline-none "
-                >
-                  Send Message
-                </animated.button>
-              </div>
-            </div>
-          </>
         )}
       </div>
     </>

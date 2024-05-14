@@ -7,6 +7,7 @@ import { User } from "../../type/type";
 import SearchUserMessage from "./SearchUserMessage";
 import HomeLoading from "../../components/loading/HomeLoading";
 import EmptyPage from "../../components/common/empty/EmptyPage";
+import SmoothButton from "../../components/SmoothButton";
 
 interface Message {
   id: number;
@@ -98,11 +99,13 @@ const History: FC = () => {
 
   return (
     <>
+      <img src="./images/logo.jpg" style={{ width: "300px" }} alt="" />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl  dark:text-white font-bold mb-4">
           History Page
         </h1>
       </div>
+      <SmoothButton />
       {loading ? (
         <HomeLoading />
       ) : dataLoaded ? (
