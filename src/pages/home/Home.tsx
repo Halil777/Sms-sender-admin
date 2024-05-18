@@ -5,6 +5,7 @@ import FilterRegion from "../../components/home/FilterRegion";
 import SortType from "../../components/home/SortType";
 import { AxiosInstance } from "../../api/AxiosInstance";
 import { User } from "../../type/type";
+import UsersCount from "../../components/home/UsersCount";
 
 const Home: FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -52,7 +53,10 @@ const Home: FC = () => {
           <FilterRegion onRegionChange={handleRegionFilterChange} />
           <SortType onTypeChange={handleTypeFilterChange} />
         </div>
-        <AddClient fetchData={fetchData} />
+        <div className="flex gap-10 items-center">
+          <UsersCount count={users.length} />
+          <AddClient fetchData={fetchData} />
+        </div>
       </div>
       <HomeTable users={users} fetchData={fetchData} loading={loading} />
     </div>

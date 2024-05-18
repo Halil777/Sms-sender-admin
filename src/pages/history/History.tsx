@@ -4,7 +4,7 @@ import { AxiosInstance } from "../../api/AxiosInstance";
 import FilterRegion from "../../components/home/FilterRegion";
 import SortType from "../../components/home/SortType";
 import { User } from "../../type/type";
-import SearchUserMessage from "./SearchUserMessage";
+// import SearchUserMessage from "./SearchUserMessage";
 import HomeLoading from "../../components/loading/HomeLoading";
 import EmptyPage from "../../components/common/empty/EmptyPage";
 
@@ -68,14 +68,14 @@ const History: FC = () => {
     fetchData();
   }, [regionFilter, typeFilter]);
 
-  const handleSearchChange = (name: string) => {
-    // Filter messages based on selected user name
-    const filtered = filteredMessages.filter((message) => {
-      const user = users.find((user) => user.id === message.userId);
-      return user?.fullName?.toLowerCase().includes(name.toLowerCase());
-    });
-    setFilteredMessages(filtered);
-  };
+  // const handleSearchChange = (name: string) => {
+  //   // Filter messages based on selected user name
+  //   const filtered = filteredMessages.filter((message) => {
+  //     const user = users.find((user) => user.id === message.userId);
+  //     return user?.fullName?.toLowerCase().includes(name.toLowerCase());
+  //   });
+  //   setFilteredMessages(filtered);
+  // };
 
   const handleRegionFilterChange = (region: string) => {
     setRegionFilter(region === "all" ? null : region);
@@ -107,10 +107,10 @@ const History: FC = () => {
               <FilterRegion onRegionChange={handleRegionFilterChange} />
               <SortType onTypeChange={handleTypeFilterChange} />
             </div>
-            <SearchUserMessage
+            {/* <SearchUserMessage
               suggestions={users.map((user) => user.fullName)}
               onChange={handleSearchChange}
-            />
+            /> */}
           </div>
           <table className="table-auto w-full dark:text-white">
             <thead>
