@@ -15,7 +15,7 @@ const Home: FC = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      let url = "/user";
+      let url = "/user/";
       if (regionFilter && typeFilter) {
         url = `/user/filter-users?region=${regionFilter}&type=${typeFilter}`;
       } else if (regionFilter) {
