@@ -16,7 +16,7 @@ const getInitialTheme = () => {
     if (userMedia.matches) {
       return "dark";
     }
-    return "light"; // light theme as the default;
+    return "dark"; // light theme as the default;
   }
 };
 

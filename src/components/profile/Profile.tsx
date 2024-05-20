@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
+// import { FaChevronDown } from "react-icons/fa";
 
 const Profile: FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -23,15 +23,15 @@ const Profile: FC = () => {
               alt="User Avatar"
             />
             <div className="flex flex-col">
-              <label className="font-bold dark:text-white">Halil Gayypov</label>
-              <label className="text-gray-300">Project Manager</label>
+              <label className="font-bold dark:text-white">Admin Panel</label>
+              <label className="text-gray-300">Sms | Sender</label>
             </div>
-            <div className="flex items-center p-2 justify-center w-6 h-6 rounded-full bg-gray-200">
+            {/* <div className="flex items-center p-2 justify-center w-6 h-6 rounded-full bg-gray-200">
               <FaChevronDown className="text-gray-600" />
-            </div>
+            </div> */}
           </div>
         </div>
-
+        {/* 
         {isDropdownOpen && (
           <div className="absolute top-full right-0 mt-2 bg-white border border-gray-300 rounded shadow-lg">
             <div className="p-4 gap-3 flex flex-col items-start">
@@ -43,7 +43,7 @@ const Profile: FC = () => {
               <button className="text-red-500 hover:underline">Logout</button>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
