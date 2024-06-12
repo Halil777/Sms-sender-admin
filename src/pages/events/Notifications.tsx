@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { UserEvent } from "./Events";
 import { MdDelete } from "react-icons/md";
-import { FaRegEdit } from "react-icons/fa";
 import EmptyPage from "../../components/common/empty/EmptyPage";
 import HomeLoading from "../../components/loading/HomeLoading";
 
@@ -43,9 +42,9 @@ const Notifications: FC<NotificationsProps> = ({
                 </span>
               </p>
               <div className="flex items-center">
-                <button className="hover:bg-gray-200 rounded-[50px] p-2 dark:hover:bg-gray-600 text-green-500">
+                {/* <button className="hover:bg-gray-200 rounded-[50px] p-2 dark:hover:bg-gray-600 text-green-500">
                   <FaRegEdit />
-                </button>
+                </button> */}
                 <button
                   className="hover:bg-gray-200 rounded-[50px] p-2 dark:hover:bg-gray-600 text-red-600"
                   onClick={() => deleteEvent(event.id.toString())}

@@ -27,6 +27,7 @@ const Calendar: React.FC = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
+
   const fetchEvents = async () => {
     try {
       const response = await AxiosInstance.get("/scheduler");
@@ -64,6 +65,7 @@ const Calendar: React.FC = () => {
     );
     setCurrentDate(prevMonth);
   };
+
   const handleNextMonth = () => {
     const nextMonth = new Date(
       currentDate.getFullYear(),
@@ -99,6 +101,32 @@ const Calendar: React.FC = () => {
     }
 
     return days;
+  };
+
+  const hasEvent = (date: Date): boolean => {
+    return events.some((event) => {
+      const eventDate = new Date(event.reminderDate);
+      return (
+        eventDate.getFullYear() === date.getFullYear() &&
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getDate() === date.getDate()
+      );
+    });
+  };
+
+  const isPastEvent = (date: Date): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+    return date < today;
+  };
+
+  const isTodayEvent = (date: Date): boolean => {
+    const today = new Date();
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
   };
 
   return (
@@ -153,6 +181,14 @@ const Calendar: React.FC = () => {
                       ? "bg-blue-200 text-blue-700"
                       : ""
                     : "text-gray-400 opacity-50"
+                } ${
+                  day.date && hasEvent(day.date)
+                    ? isPastEvent(day.date)
+                      ? "bg-red-200 text-red-700"
+                      : isTodayEvent(day.date)
+                      ? "bg-blue-200 text-blue-700"
+                      : "bg-green-200 text-green-700"
+                    : ""
                 }`}
               >
                 {day.date ? day.date.getDate() : ""}
@@ -176,6 +212,7 @@ const Calendar: React.FC = () => {
             clickedDay={clickedDay}
             fetchEvents={fetchEvents}
             setAddEvent={setAddEvent}
+            hasEvent={hasEvent}
           />
         </>
       )}

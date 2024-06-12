@@ -30,6 +30,7 @@ const History: FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [openMessageId, setOpenMessageId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!loading) {
@@ -67,6 +68,10 @@ const History: FC = () => {
   useEffect(() => {
     fetchData();
   }, [regionFilter, typeFilter]);
+
+  const handleOpenMessage = (id: number) => {
+    setOpenMessageId(openMessageId === id ? null : id);
+  };
 
   // const handleSearchChange = (name: string) => {
   //   // Filter messages based on selected user name
@@ -134,11 +139,19 @@ const History: FC = () => {
                     <td className="border px-4 py-2">
                       {user ? user.fullName : "-"}
                     </td>
-                    <td className="border px-4 py-2">{message.message}</td>
+                    <td
+                      className="border px-4 py-2 cursor-pointer"
+                      onClick={() => handleOpenMessage(message.id)}
+                    >
+                      {openMessageId === message.id
+                        ? message.message
+                        : message.message.slice(7, 19)}
+                      ...
+                    </td>
                     <td className="border px-4 py-2">{message.phone}</td>
                     <td className="border px-4 py-2">{message.region}</td>
                     <td className="border px-4 py-2">{message.type}</td>
-                    <td className="border px-4 py-2">
+                    <td className="border px-4 py-2 ">
                       {message.created_at.substring(0, 10)}
                     </td>
                     <td className="border px-4 py-2 text-center">
